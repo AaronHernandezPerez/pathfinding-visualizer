@@ -1,7 +1,9 @@
-import { GridNode } from "types";
-
-
 export interface GridProps {
-  grid: GridNode[][];
+  cellSize: number;
+}
+
+export interface GridLatticeProps {
+  rows: number;
+  cols: number;
   cellSize: number;
 }

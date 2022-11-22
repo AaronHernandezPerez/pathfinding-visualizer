@@ -11,3 +11,15 @@ export interface GridNode {
   row: number;
   col: number;
 }
+
+export interface RowCol {
+  row: number;
+  col: number;
+}
+
+
+export interface GridReturn {
+  grid: GridNode[][];
+  start: RowCol;
+  meta: RowCol;
+}

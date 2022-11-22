@@ -10,6 +10,7 @@ module.exports = {
           border: colors.blue['500'],
           start: colors.red['500'],
           meta: colors.orange['500'],
+          wall: colors.blue['900'],
         },
       },
     },

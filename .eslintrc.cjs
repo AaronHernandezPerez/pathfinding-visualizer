@@ -13,11 +13,14 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', 'vitest'],
+  plugins: ['react', 'react-hooks', 'vitest'],
   rules: {
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off',
   },
   ignorePatterns: ['vite.config.ts'],
   settings: {

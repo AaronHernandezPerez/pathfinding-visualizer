@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store';
 import { NodeType } from 'types';
 import { NodeProps } from './types';
 
@@ -5,10 +7,15 @@ const typeStyles = {
   [NodeType.START]: 'bg-grid-start',
   [NodeType.META]: 'bg-grid-meta',
   [NodeType.EMPTY]: '',
-  [NodeType.WALL]: '',
+  [NodeType.WALL]: 'bg-grid-wall',
 };
 
-export default function Node({ id, size, type }: NodeProps) {
+export default function Node({ size, row, col }: NodeProps) {
+  console.log('Node', row, col);
+  const { id, type } = useSelector(
+    (state: RootState) => state.gridStore.grid[row][col]
+  );
+
   return (
     <div
       id={id}

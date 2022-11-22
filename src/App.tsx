@@ -1,34 +1,33 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Grid from 'components/Grid';
 import Header from 'components/Header';
 import { useWindowDimensions } from 'hooks';
-import { createGrid, getSizes, resizeGrid } from 'utils/grid';
-import { RootState } from 'store/store';
-import { setGrid } from 'store/gridSlice';
+import { getGridSize } from 'utils/grid';
+import { setGridSize } from 'store/gridSlice';
+import Button from 'atoms/Button';
 
 export const CELL_SIZE = 24;
 
 function App() {
   const dimensions = useWindowDimensions();
   const dispatch = useDispatch();
-  const grid = useSelector((state: RootState) => state.gridStore.grid);
+
+  const gridSize = useMemo(
+    () => getGridSize(dimensions, CELL_SIZE),
+    [dimensions]
+  );
 
   useEffect(() => {
-    let newGrid;
-    if (grid.length > 0) {
-      newGrid = resizeGrid(getSizes(dimensions, CELL_SIZE), grid);
-    } else {
-      newGrid = createGrid(getSizes(dimensions, CELL_SIZE));
-    }
-    dispatch(setGrid(newGrid));
-  }, [dimensions]);
+    dispatch(setGridSize(gridSize));
+  }, [dispatch, gridSize]);
 
   return (
     <>
       <Header />
-      <Grid grid={grid} cellSize={CELL_SIZE} />
+      <Button>asdsfa</Button>
+      <Grid cellSize={CELL_SIZE} />
     </>
   );
 }
