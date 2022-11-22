@@ -1,6 +1,11 @@
 import { WindowDimensions } from 'hooks';
 import { GridNode, GridReturn, NodeType, RowCol } from 'types';
 
+/* 
+I tried to have as little side effects as possible, but in the case of the grid,
+it was more efficient to work with the array in place
+ */
+
 function validDimensions({ height, width }: WindowDimensions) {
   if (height < 4 || width < 4) return false;
   return true;
@@ -54,17 +59,45 @@ export function extractColRow(id: string) {
 
 function repositionNode(
   { height, width }: Partial<WindowDimensions>,
-  nodePosition: RowCol
+  nodePosition: RowCol,
+  invalidPosition: RowCol
 ) {
   const newPosition = { ...nodePosition };
-  if (height && height < nodePosition.row) {
-    newPosition.row = height;
+  console.log({ newPosition, width });
+
+  if (height && height <= nodePosition.row) {
+    let newRowPosition = height - 1;
+    if (newRowPosition === invalidPosition.row) {
+      newRowPosition--;
+    }
+    newPosition.row = newRowPosition;
   }
-  if (width && width < nodePosition.col) {
-    newPosition.col = width;
+  if (width && width <= nodePosition.col) {
+    let newColPosition = width - 1;
+    if (newColPosition === invalidPosition.col) {
+      newColPosition--;
+    }
+    newPosition.col = newColPosition;
   }
 
   return newPosition;
+}
+
+/**
+ * Contains side effects for @param grid
+ */
+function validateSpecialNodes(
+  dimensions: Partial<WindowDimensions>,
+  grid: GridNode[][],
+  start: RowCol,
+  meta: RowCol
+) {
+  start = repositionNode(dimensions, start, meta);
+  meta = repositionNode(dimensions, meta, start);
+  grid[start.row][start.col].type = NodeType.START;
+  grid[meta.row][meta.col].type = NodeType.META;
+
+  return { start, meta };
 }
 
 /**
@@ -79,8 +112,14 @@ function resizeHeight(
   const length = grid.length;
   if (height < length) {
     grid = grid.slice(0, height);
-    start = repositionNode({ height }, start);
-    meta = repositionNode({ height }, meta);
+    const { start: validatedStart, meta: validatedMeta } = validateSpecialNodes(
+      { width },
+      grid,
+      start,
+      meta
+    );
+    start = validatedStart;
+    meta = validatedMeta;
   } else if (height > length) {
     for (let row = length - 1; row < height; row++) {
       grid.push(
@@ -114,8 +153,14 @@ function resizeWidth(
     for (let row = 0; row < length; row++) {
       grid[row] = grid[row].slice(0, width);
     }
-    start = repositionNode({ width }, start);
-    meta = repositionNode({ width }, meta);
+    const { start: validatedStart, meta: validatedMeta } = validateSpecialNodes(
+      { width },
+      grid,
+      start,
+      meta
+    );
+    start = validatedStart;
+    meta = validatedMeta;
   } else if (width > colLength) {
     const colDiff = width - colLength;
     for (let row = 0; row < length; row++) {
@@ -135,6 +180,9 @@ function resizeWidth(
   return { grid, start, meta };
 }
 
+/**
+ * Contains side effects for @param grid
+ */
 export function resizeGrid(
   dimensions: WindowDimensions,
   grid: GridNode[][],
@@ -144,7 +192,7 @@ export function resizeGrid(
   if (!validDimensions(dimensions)) return { grid, start, meta };
 
   let newGrid = resizeHeight(dimensions, grid, start, meta);
-  newGrid = resizeWidth(dimensions, newGrid.grid, start, meta);
+  newGrid = resizeWidth(dimensions, newGrid.grid, newGrid.start, newGrid.meta);
 
   return newGrid;
 }
