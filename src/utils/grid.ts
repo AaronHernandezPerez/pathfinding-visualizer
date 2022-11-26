@@ -1,10 +1,16 @@
 import { WindowDimensions } from 'hooks';
-import { GridNode, GridReturn, NodeType, RowCol } from 'types';
+import { GridNode, NodeType, RowCol } from 'types';
 
 /* 
 I tried to have as little side effects as possible, but in the case of the grid,
 it was more efficient to work with the array in place
  */
+
+export interface GridReturn {
+  grid: GridNode[][];
+  start: RowCol;
+  meta: RowCol;
+}
 
 function validDimensions({ height, width }: WindowDimensions) {
   if (height < 4 || width < 4) return false;
@@ -14,11 +20,12 @@ function validDimensions({ height, width }: WindowDimensions) {
 export function getGridSize(
   { width, height }: WindowDimensions,
   cellSize: number,
+  heightOffset = 128,
   margin = 4
 ) {
   return {
     width: Math.floor(width / cellSize) - margin,
-    height: Math.floor((height - 64) / cellSize) - margin,
+    height: Math.floor((height - heightOffset) / cellSize) - margin,
   };
 }
 

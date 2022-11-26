@@ -1,21 +1,13 @@
-import { memo, MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import { useSelector } from 'react-redux';
-import { useGridMouseEvents } from 'hooks';
 
 import { GridProps } from './types';
 import { RootState } from 'store/store';
-import GridLattice from 'components/Grid/GridLattice';
+import Node from 'components/Node';
 
 function Grid({ cellSize }: GridProps) {
   console.log('Grid');
 
-  const { handleMouseDown, handleMouseUp, handleMouseEnter } =
-    useGridMouseEvents();
-
-  // const rows = useSelector((state: RootState) => state.gridStore.grid.length);
-  // const cols = useSelector(
-  //   (state: RootState) => state.gridStore.grid[0]?.length || 0
-  // );
   const rows = useSelector((state: RootState) => state.gridStore.grid.length);
   const cols = useSelector(
     (state: RootState) => state.gridStore.grid[0]?.length || 0
@@ -29,16 +21,24 @@ function Grid({ cellSize }: GridProps) {
   return (
     <div className="flex justify-center align-middle p-12">
       <div
-        className="border-l border-t border-grid-border"
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
+        className="border-l border-t border-grid-border  select-none"
         onContextMenu={handleContextMenu}
-        onMouseMove={handleMouseEnter}
       >
-        <GridLattice cellSize={cellSize} cols={cols} rows={rows} />
+        {Array.from({ length: rows }).map((_, rowIndex) => (
+          <div className={'flex border-blue-400'} key={rowIndex}>
+            {Array.from({ length: cols }).map((_, colIndex) => (
+              <Node
+                key={colIndex}
+                row={rowIndex}
+                col={colIndex}
+                size={cellSize}
+              />
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-export default memo(Grid);
+export default Grid;

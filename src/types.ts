@@ -1,8 +1,10 @@
 export enum NodeType {
   START,
-  WALL,
-  META,
   EMPTY,
+  WALL,
+  VISITED,
+  PATH,
+  META,
 }
 
 export interface GridNode {
@@ -15,11 +17,4 @@ export interface GridNode {
 export interface RowCol {
   row: number;
   col: number;
-}
-
-
-export interface GridReturn {
-  grid: GridNode[][];
-  start: RowCol;
-  meta: RowCol;
 }

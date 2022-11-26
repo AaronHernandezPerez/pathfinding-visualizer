@@ -50,7 +50,16 @@ export const gridSlice = createSlice({
       state.start = newGrid.start;
       state.meta = newGrid.meta;
     },
-
+    cleanGrid: (state) => {
+      state.grid.forEach((row) => {
+        row.forEach((node) => {
+          const typesToEmpty = [NodeType.PATH, NodeType.VISITED];
+          if (typesToEmpty.includes(node.type)) {
+            node.type = NodeType.EMPTY;
+          }
+        });
+      });
+    },
     setNode: (
       state,
       action: PayloadAction<{
@@ -64,44 +73,58 @@ export const gridSlice = createSlice({
     },
     setAddType: (state, action: PayloadAction<RowCol>) => {
       const { row, col } = action.payload;
-      console.log(action.payload);
-      console.log(state.grid);
       state.addType = state.grid[row][col].type;
     },
-    changeType: (state, action: PayloadAction<RowCol>) => {
-      const { row, col } = action.payload;
+    setNodeType: (
+      state,
+      action: PayloadAction<RowCol & { forceType?: NodeType }>
+    ) => {
+      const { row, col, forceType } = action.payload;
 
       const node = state.grid[row][col];
       if (node.type === NodeType.START || node.type === NodeType.META) {
         return;
       }
 
+      console.log({ forceType, addType: state.addType });
+      if (forceType) {
+        node.type = forceType;
+        return;
+      }
+
+      console.log({ addtype: state.addType });
+
+      const addTypeString = state.addType === NodeType.START ? 'start' : 'meta';
+
       switch (state.addType) {
         case NodeType.START:
-          if (node.type !== NodeType.EMPTY) return;
-          node.type = NodeType.START;
-
-          state.grid[state.start.row][state.start.col].type = NodeType.EMPTY;
-          state.start.row = row;
-          state.start.col = col;
-          break;
-
         case NodeType.META:
-          if (node.type !== NodeType.EMPTY) return;
-          node.type = NodeType.META;
+          if (![NodeType.EMPTY, NodeType.VISITED].includes(node.type)) break;
+          node.type = state.addType;
 
-          state.grid[state.meta.row][state.meta.col].type = NodeType.EMPTY;
-          state.meta.row = row;
-          state.meta.col = col;
+          state.grid[state[addTypeString].row][state[addTypeString].col].type =
+            NodeType.EMPTY;
+          state[addTypeString].row = row;
+          state[addTypeString].col = col;
           break;
-        case NodeType.EMPTY:
-          node.type = NodeType.WALL;
+
+        // case NodeType.META:
+        //   if (node.type !== NodeType.EMPTY) return;
+        //   node.type = NodeType.META;
+
+        //   state.grid[state.meta.row][state.meta.col].type = NodeType.EMPTY;
+        //   state.meta.row = row;
+        //   state.meta.col = col;
+        //   break;
+        case NodeType.PATH:
+          node.type = NodeType.PATH;
           break;
         case NodeType.WALL:
           node.type = NodeType.EMPTY;
           break;
 
         default:
+          node.type = NodeType.WALL;
           break;
       }
     },
@@ -109,7 +132,7 @@ export const gridSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setGridSize, setNode, setAddType, changeType } =
+export const { setGridSize, cleanGrid, setNode, setAddType, setNodeType } =
   gridSlice.actions;
 
 export const gridLengthEquality = (

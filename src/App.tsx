@@ -6,7 +6,7 @@ import Header from 'components/Header';
 import { useWindowDimensions } from 'hooks';
 import { getGridSize } from 'utils/grid';
 import { setGridSize } from 'store/gridSlice';
-import Button from 'atoms/Button';
+import AlgorithmsSelector from 'components/AlgorithmsSelector';
 
 export const CELL_SIZE = 24;
 
@@ -26,7 +26,7 @@ function App() {
   return (
     <>
       <Header />
-      <Button>asdsfa</Button>
+      <AlgorithmsSelector />
       <Grid cellSize={CELL_SIZE} />
     </>
   );
