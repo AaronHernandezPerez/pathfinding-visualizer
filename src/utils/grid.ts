@@ -1,5 +1,5 @@
 import { WindowDimensions } from 'hooks';
-import { GridNode, NodeType, RowCol } from 'types';
+import { GridNode, GridOfNodes, NodeType, RowCol } from 'types';
 
 /* 
 I tried to have as little side effects as possible, but in the case of the grid,
@@ -7,7 +7,7 @@ it was more efficient to work with the array in place
  */
 
 export interface GridReturn {
-  grid: GridNode[][];
+  grid: GridOfNodes;
   start: RowCol;
   meta: RowCol;
 }
@@ -35,7 +35,7 @@ export function createGrid({
 }: WindowDimensions): // start: RowCol,
 // meta: RowCol
 GridReturn {
-  const grid: GridNode[][] = [];
+  const grid: GridOfNodes = [];
 
   if (!validDimensions({ height, width }))
     return { grid, start: { row: 0, col: 0 }, meta: { row: 0, col: 0 } };
@@ -95,7 +95,7 @@ function repositionNode(
  */
 function validateSpecialNodes(
   dimensions: Partial<WindowDimensions>,
-  grid: GridNode[][],
+  grid: GridOfNodes,
   start: RowCol,
   meta: RowCol
 ) {
@@ -112,7 +112,7 @@ function validateSpecialNodes(
  */
 function resizeHeight(
   { height, width }: WindowDimensions,
-  grid: GridNode[][],
+  grid: GridOfNodes,
   start: RowCol,
   meta: RowCol
 ): GridReturn {
@@ -150,7 +150,7 @@ function resizeHeight(
  */
 function resizeWidth(
   { width }: WindowDimensions,
-  grid: GridNode[][],
+  grid: GridOfNodes,
   start: RowCol,
   meta: RowCol
 ): GridReturn {
@@ -192,7 +192,7 @@ function resizeWidth(
  */
 export function resizeGrid(
   dimensions: WindowDimensions,
-  grid: GridNode[][],
+  grid: GridOfNodes,
   start: RowCol,
   meta: RowCol
 ): GridReturn {

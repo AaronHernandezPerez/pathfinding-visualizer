@@ -23,9 +23,14 @@ const typeStyles = {
   [NodeType.PATH]: '',
 } as const;
 
-function Node({ size, row, col }: NodeProps) {
+function Node({
+  size,
+  row,
+  col,
+  handleMouseDown,
+  handleMouseEnter,
+}: NodeProps) {
   // console.log('Node', row, col);
-  const { handleMouseDown, handleMouseEnter } = useGridMouseEvents();
   const style = useMemo(() => ({ height: size, width: size }), [size]);
 
   const { id, type } = useSelector(

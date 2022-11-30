@@ -4,10 +4,11 @@ import { useSelector } from 'react-redux';
 import { GridProps } from './types';
 import { RootState } from 'store/store';
 import Node from 'components/Node';
+import { useGridMouseEvents } from 'hooks';
 
 function Grid({ cellSize }: GridProps) {
   console.log('Grid');
-
+  const { handleMouseDown, handleMouseEnter } = useGridMouseEvents();
   const rows = useSelector((state: RootState) => state.gridStore.grid.length);
   const cols = useSelector(
     (state: RootState) => state.gridStore.grid[0]?.length || 0
@@ -32,6 +33,8 @@ function Grid({ cellSize }: GridProps) {
                 row={rowIndex}
                 col={colIndex}
                 size={cellSize}
+                handleMouseDown={handleMouseDown}
+                handleMouseEnter={handleMouseEnter}
               />
             ))}
           </div>

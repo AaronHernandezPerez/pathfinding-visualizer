@@ -10,7 +10,7 @@ module.exports = {
           border: colors.blue['500'],
           start: colors.red['500'],
           meta: colors.orange['500'],
-          wall: colors.teal['900'],
+          wall: colors.teal['700'],
           visited: colors.cyan['200'],
           path: colors.yellow['200'],
         },
@@ -33,9 +33,11 @@ module.exports = {
         'node-path': {
           '0%': {
             transform: 'scale(1.5)',
+            opacity: 0.5,
           },
           '100%': {
             transform: undefined,
+            opacity: undefined,
           },
         },
       },

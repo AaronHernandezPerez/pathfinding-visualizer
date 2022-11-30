@@ -7,6 +7,8 @@ export enum NodeType {
   META,
 }
 
+export type GridOfNodes = GridNode[][];
+
 export interface GridNode {
   id: string;
   type: NodeType;

@@ -1,4 +1,4 @@
-import { ButtonProps } from 'atoms/types';
+import ButtonProps from './types';
 
 export default function Button({
   children,

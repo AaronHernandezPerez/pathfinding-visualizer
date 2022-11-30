@@ -1,10 +1,19 @@
+import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'store/store';
-import { cleanGrid, setNode } from 'store/gridSlice';
-import breadthFirstSearch from 'algorithms/breadthFirstSearch';
-import Button from 'atoms/Button';
-import { GridNode, NodeType } from 'types';
 import { Dispatch } from '@reduxjs/toolkit';
+
+import { RootState } from 'store/store';
+import { aStar, dijkstra, greedyBestFirstSearch } from 'algorithms/weighted';
+import {
+  breadthFirstSearch,
+  depthFirstSearch,
+  greedy,
+} from 'algorithms/unweighted';
+import { cleanGrid, setDirty, setNode } from 'store/gridSlice';
+import Button from 'atoms/Buttons/Button';
+import Checkbox from 'atoms/Checkbox';
+import { AlgorithmsSignature } from 'algorithms/types';
+import { GridNode, NodeType } from 'types';
 
 const colorNodes = async (
   visitedNodes: GridNode[],
@@ -25,7 +34,9 @@ const colorNodes = async (
 
       i++;
       if (i !== visitedNodes.length) {
+        // setTimeout(() => {
         window.requestAnimationFrame(animate);
+        // }, 200);
       } else {
         resolve();
       }
@@ -35,20 +46,49 @@ const colorNodes = async (
 
 export default function AlgorithmsSelector() {
   const dispatch = useDispatch();
+  const [diagonals, setDiagonals] = useState(false);
   const grid = useSelector((state: RootState) => state.gridStore.grid);
-  const start = useSelector((state: RootState) => state.gridStore.start);
+  const start = useSelector((state: RootState) => state.gridStore.startCoord);
+  const meta = useSelector((state: RootState) => state.gridStore.metaCoord);
 
-  const callback = () => {
-    dispatch(cleanGrid());
-    const { visitedNodes, pathNodes } = breadthFirstSearch(
-      start,
-      structuredClone(grid)
-    );
+  const clickHandler = useCallback(
+    (algorithm: AlgorithmsSignature) => () => {
+      dispatch(cleanGrid());
+      const { visitedNodes, pathNodes } = algorithm({
+        start,
+        grid: structuredClone(grid),
+        allowDiagonals: diagonals,
+        meta,
+      });
+      console.log('Path length', pathNodes.length);
 
-    colorNodes(visitedNodes, NodeType.VISITED, dispatch)
-      .then(async () => await colorNodes(pathNodes, NodeType.PATH, dispatch))
-      .catch(console.error);
-  };
+      dispatch(setDirty());
 
-  return <Button onClick={callback}>Algorithm</Button>;
+      colorNodes(visitedNodes, NodeType.VISITED, dispatch)
+        .then(async () => await colorNodes(pathNodes, NodeType.PATH, dispatch))
+        .catch(console.error);
+    },
+    [diagonals, dispatch, grid, meta, start]
+  );
+
+  return (
+    <>
+      <Button onClick={clickHandler(aStar)}>A*</Button>
+      <Button onClick={clickHandler(dijkstra)}>Dijkstra</Button>
+      <Button onClick={clickHandler(greedy)}>Greedy</Button>
+      <Button onClick={clickHandler(greedyBestFirstSearch)}>
+        Greedy best-first search
+      </Button>
+      <Button onClick={clickHandler(breadthFirstSearch)}>
+        Breadth first search
+      </Button>
+      <Button onClick={clickHandler(depthFirstSearch)}>
+        Depth first search
+      </Button>
+      <div>
+        Set diagonals
+        <Checkbox checked={diagonals} onChange={setDiagonals} />
+      </div>
+    </>
+  );
 }

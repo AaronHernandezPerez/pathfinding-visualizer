@@ -1,7 +1,7 @@
 import { MouseEvent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { setNodeType, setAddType } from 'store/gridSlice';
+import { setNodeType, setAddType, cleanGrid } from 'store/gridSlice';
 import { NodeType } from 'types';
 import { extractColRow } from 'utils/grid';
 
@@ -10,10 +10,10 @@ export default function useGridMouseEvents() {
 
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
-      console.log({ e });
-
       const target = e.target as HTMLElement;
       const { row, col } = extractColRow(target.id);
+
+      dispatch(cleanGrid());
 
       dispatch(
         setAddType({

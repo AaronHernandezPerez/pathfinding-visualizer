@@ -1,39 +1,35 @@
+/**
+ * Tried different implementations of the Queue, the results were
+ * In chrome:
+ * 1. Array implementation: 1564 ops/s
+ * 2. Object implementation: 1174 ops/s
+ * 3. Map implementation: 1150 ops/s
+ * In firefox:
+ * 1. Array implementation: 2126 ops/s
+ * 2. Object implementation: 1674 ops/s
+ * 3. Map implementation: 709 ops/s
+ */
 export default class Queue<T> {
-  private elements: { [key: string]: T };
-  private head: number;
-  private tail: number;
+  private readonly elements: T[];
 
-  constructor(elements?: T[]) {
-    this.elements = {};
-    this.head = 0;
-    this.tail = 0;
-
-    if (elements?.length) {
-      const flatElements = elements.flat(Infinity) as T[];
-      flatElements.forEach((e) => {
-        this.enqueue(e);
-      });
-    }
+  constructor(elements: T[] = []) {
+    this.elements = [...elements];
   }
 
   enqueue(element: T) {
-    this.elements[this.tail] = element;
-    this.tail++;
+    this.elements.push(element);
   }
 
   dequeue() {
-    const item = this.elements[this.head];
-    delete this.elements[this.head];
-    this.head++;
-    return item;
+    return this.elements.shift();
   }
 
   peek() {
-    return this.elements[this.head];
+    return this.elements[0];
   }
 
   get length() {
-    return this.tail - this.head;
+    return this.elements.length;
   }
 
   get isEmpty() {
