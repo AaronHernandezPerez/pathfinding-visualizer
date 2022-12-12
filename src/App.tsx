@@ -1,12 +1,12 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-import Grid from 'components/Grid';
-import Header from 'components/Header';
+import Grid from 'components/stateful/Grid';
+import Header from 'components/stateless/Header';
 import { useWindowDimensions } from 'hooks';
 import { getGridSize } from 'utils/grid';
 import { setGridSize } from 'store/gridSlice';
-import AlgorithmsSelector from 'components/AlgorithmsSelector';
+import AlgorithmsSelector from 'components/stateful/AlgorithmsSelector';
 
 export const CELL_SIZE = 24;
 

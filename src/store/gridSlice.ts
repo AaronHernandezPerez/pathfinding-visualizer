@@ -4,7 +4,15 @@ import { GridNode, GridOfNodes, NodeType, RowCol } from 'types';
 import { createGrid, resizeGrid } from 'utils/grid';
 import { WindowDimensions } from 'hooks';
 
+import extraReducers from 'store/gridExtraReducers';
+
+export enum GridStatus {
+  IDLE,
+  ANIMATING,
+}
+
 export interface GridSliceState {
+  status: GridStatus;
   gridSize: WindowDimensions;
   grid: GridOfNodes;
   startCoord: RowCol;
@@ -14,6 +22,7 @@ export interface GridSliceState {
 }
 
 const initialState: GridSliceState = {
+  status: GridStatus.IDLE,
   gridSize: { width: -1, height: -1 },
   grid: [],
   startCoord: { row: 0, col: 0 },
@@ -23,7 +32,7 @@ const initialState: GridSliceState = {
 };
 
 export const gridSlice = createSlice({
-  name: 'counter',
+  name: 'grid',
   initialState,
   reducers: {
     setGridSize: (state, action: PayloadAction<WindowDimensions>) => {
@@ -92,6 +101,15 @@ export const gridSlice = createSlice({
       const { row, col } = action.payload;
       state.addType = state.grid[row][col].type;
     },
+    setMultipleNodesType: (
+      state,
+      action: PayloadAction<{ nodes: GridNode[]; type: NodeType }>
+    ) => {
+      const { nodes, type } = action.payload;
+      nodes.forEach(({ row, col }) => {
+        state.grid[row][col].type = type;
+      });
+    },
     setNodeType: (
       state,
       action: PayloadAction<RowCol & { forceType?: NodeType }>
@@ -144,6 +162,7 @@ export const gridSlice = createSlice({
       }
     },
   },
+  extraReducers,
 });
 
 // Action creators are generated for each case reducer function
@@ -152,10 +171,14 @@ export const {
   setDirty,
   cleanGrid,
   setNode,
+  setMultipleNodesType,
   setAddType,
   setNodeType,
   updateGrid,
 } = gridSlice.actions;
+
+// Extra actions from the extra reducer
+export { animateResult } from 'store/gridExtraReducers';
 
 export const gridLengthEquality = (
   newGrid: GridOfNodes,

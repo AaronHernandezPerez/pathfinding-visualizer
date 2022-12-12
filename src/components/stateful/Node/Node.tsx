@@ -1,5 +1,4 @@
 import { memo, useMemo } from 'react';
-import { useGridMouseEvents } from 'hooks';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store';
 import { NodeType } from 'types';
@@ -30,7 +29,6 @@ function Node({
   handleMouseDown,
   handleMouseEnter,
 }: NodeProps) {
-  // console.log('Node', row, col);
   const style = useMemo(() => ({ height: size, width: size }), [size]);
 
   const { id, type } = useSelector(

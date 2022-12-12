@@ -1,17 +1,13 @@
 import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Dispatch } from '@reduxjs/toolkit';
+import { Dispatch, PayloadAction } from '@reduxjs/toolkit';
 
-import { RootState } from 'store/store';
+import { AppDispatch, RootState } from 'store/store';
 import { aStar, dijkstra, greedyBestFirstSearch } from 'algorithms/weighted';
-import {
-  breadthFirstSearch,
-  depthFirstSearch,
-  greedy,
-} from 'algorithms/unweighted';
-import { cleanGrid, setDirty, setNode } from 'store/gridSlice';
-import Button from 'atoms/Buttons/Button';
-import Checkbox from 'atoms/Checkbox';
+import { breadthFirstSearch, depthFirstSearch } from 'algorithms/unweighted';
+import { animateResult, cleanGrid, setDirty, setNode } from 'store/gridSlice';
+import Button from 'components/atoms/Buttons/Button';
+import Checkbox from 'components/atoms/Checkbox';
 import { AlgorithmsSignature } from 'algorithms/types';
 import { GridNode, NodeType } from 'types';
 
@@ -45,8 +41,10 @@ const colorNodes = async (
   });
 
 export default function AlgorithmsSelector() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [diagonals, setDiagonals] = useState(false);
+  const [animationPromise, setAnimationPromise] =
+    useState<Promise<unknown | PayloadAction<any, any>>>(null);
   const grid = useSelector((state: RootState) => state.gridStore.grid);
   const start = useSelector((state: RootState) => state.gridStore.startCoord);
   const meta = useSelector((state: RootState) => state.gridStore.metaCoord);
@@ -63,19 +61,25 @@ export default function AlgorithmsSelector() {
       console.log('Path length', pathNodes.length);
 
       dispatch(setDirty());
+      const promise = dispatch(animateResult({ visitedNodes, pathNodes }));
 
-      colorNodes(visitedNodes, NodeType.VISITED, dispatch)
-        .then(async () => await colorNodes(pathNodes, NodeType.PATH, dispatch))
-        .catch(console.error);
+      setAnimationPromise(promise);
+
+      // colorNodes(visitedNodes, NodeType.VISITED, dispatch)
+      //   .then(async () => await colorNodes(pathNodes, NodeType.PATH, dispatch))
+      //   .catch(console.error);
     },
     [diagonals, dispatch, grid, meta, start]
   );
+
+  const cancelAnimation = () => {
+    animationPromise.abort();
+  };
 
   return (
     <>
       <Button onClick={clickHandler(aStar)}>A*</Button>
       <Button onClick={clickHandler(dijkstra)}>Dijkstra</Button>
-      <Button onClick={clickHandler(greedy)}>Greedy</Button>
       <Button onClick={clickHandler(greedyBestFirstSearch)}>
         Greedy best-first search
       </Button>
@@ -89,6 +93,7 @@ export default function AlgorithmsSelector() {
         Set diagonals
         <Checkbox checked={diagonals} onChange={setDiagonals} />
       </div>
+      <Button onClick={cancelAnimation}>CancelAnimation</Button>
     </>
   );
 }

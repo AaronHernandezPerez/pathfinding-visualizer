@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { GridProps } from './types';
 import { RootState } from 'store/store';
-import Node from 'components/Node';
+import Node from 'components/stateful/Node';
 import { useGridMouseEvents } from 'hooks';
 
 function Grid({ cellSize }: GridProps) {

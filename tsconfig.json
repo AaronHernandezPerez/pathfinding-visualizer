@@ -23,7 +23,8 @@
     "strictNullChecks": false,
     "types": [
       "vitest/globals"
-    ]
+    ],
+    "noErrorTruncation": true
   },
   "include": [
     "src",
