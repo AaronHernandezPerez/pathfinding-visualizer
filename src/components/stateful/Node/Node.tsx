@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { GridStatus } from 'store/gridSlice';
 import { RootState } from 'store/store';
 import { NodeType } from 'types';
+import { joinClasses } from 'utils/classes';
 import { NodeProps } from './types';
 
 const internalTypeStyles = {
@@ -59,11 +60,18 @@ function Node({
       onPointerDown={handleMouseDown}
       onPointerEnter={handleMouseEnter}
       id={id}
-      className={`will-change-border-color border-grid-border border-r border-b ${typeStyles[type]}`}
+      className={joinClasses(
+        'will-change-border-color border-grid-border border-r border-b',
+        typeStyles[type]
+      )}
       style={style}
     >
       <div
-        className={`will-change-node-animation pointer-events-none h-full ${internalTypeStyles[type]} ${animationClass}`}
+        className={joinClasses(
+          'will-change-node-animation pointer-events-none h-full',
+          internalTypeStyles[type],
+          animationClass
+        )}
       ></div>
     </div>
   );

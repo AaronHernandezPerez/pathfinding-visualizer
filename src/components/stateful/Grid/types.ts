@@ -1,5 +1,5 @@
 export interface GridProps {
-  cellSize: number;
+  cellSize?: number;
 }
 
 export interface GridLatticeProps {

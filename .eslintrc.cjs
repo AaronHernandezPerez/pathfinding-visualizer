@@ -45,7 +45,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     'tailwindcss/no-custom-classname': 'off',
   },
-  ignorePatterns: ['vite.config.ts', 'vite-env.d.ts'],
+  ignorePatterns: ['vite.config.ts', 'vite-env.d.ts', 'dist/*'],
   settings: {
     react: {
       version: 'detect',

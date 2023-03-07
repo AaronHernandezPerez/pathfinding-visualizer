@@ -1,13 +1,7 @@
 import { MouseEvent, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import {
-  cleanGrid,
-  GridStatus,
-  setAddType,
-  setNodeType,
-} from 'store/gridSlice';
-import { RootState } from 'store/store';
+import { cleanGrid, setAddType, setNodeType } from 'store/gridSlice';
 import { NodeType } from 'types';
 import { extractColRow } from 'utils/grid';
 
