@@ -1,11 +1,11 @@
-import Queue from 'structures/Queue';
 import {
   AlgorithmsParameters,
   AlgorithmsReturn,
   VisitedPath,
 } from 'algorithms/types';
-import { GridNode, NodeType } from 'types';
 import { getConnectingNodes, getPath } from 'algorithms/utils';
+import Queue from 'structures/Queue';
+import { GridNode, NodeType } from 'types';
 
 /**
  * 1. Add root node to the queue, and mark it as visited(already explored).

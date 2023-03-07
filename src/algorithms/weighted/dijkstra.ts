@@ -1,4 +1,3 @@
-import PriorityQueue from 'structures/PriorityQueue';
 import {
   AlgorithmsParameters,
   AlgorithmsReturn,
@@ -6,6 +5,7 @@ import {
   WeightedVisitedPath,
 } from 'algorithms/types';
 import { getWeightedConnectingNodes, getWeightedPath } from 'algorithms/utils';
+import PriorityQueue from 'structures/PriorityQueue';
 import { GridNode, NodeType } from 'types';
 
 const lowestCostNode = (a: CostNode, b: CostNode) => {

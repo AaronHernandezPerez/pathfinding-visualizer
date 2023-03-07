@@ -1,11 +1,11 @@
-import Stack from 'structures/Stack';
 import {
   AlgorithmsParameters,
   AlgorithmsReturn,
   VisitedPath,
 } from 'algorithms/types';
-import { GridNode, NodeType } from 'types';
 import { getConnectingNodes, getPath } from 'algorithms/utils';
+import Stack from 'structures/Stack';
+import { GridNode, NodeType } from 'types';
 
 /**
  * 1. Add root node to the stack.

@@ -1,5 +1,5 @@
-import { WindowDimensions } from 'hooks';
 import { GridNode, GridOfNodes, NodeType, RowCol } from 'types';
+import { WindowDimensions } from './getWindowDimensions';
 
 /* 
 I tried to have as little side effects as possible, but in the case of the grid,
@@ -29,12 +29,7 @@ export function getGridSize(
   };
 }
 
-export function createGrid({
-  height,
-  width,
-}: WindowDimensions): // start: RowCol,
-// meta: RowCol
-GridReturn {
+export function createGrid({ height, width }: WindowDimensions): GridReturn {
   const grid: GridOfNodes = [];
 
   if (!validDimensions({ height, width }))
@@ -70,7 +65,6 @@ function repositionNode(
   invalidPosition: RowCol
 ) {
   const newPosition = { ...nodePosition };
-  console.log({ newPosition, width });
 
   if (height && height <= nodePosition.row) {
     let newRowPosition = height - 1;

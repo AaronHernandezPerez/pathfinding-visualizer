@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit';
+
 import {
   GridSliceState,
   GridStatus,
+  setGridStatus,
   setMultipleNodesType,
   setNode,
 } from 'store/gridSlice';
@@ -14,11 +16,13 @@ export const animateResult = createAsyncThunk<
 >(
   'grid/animateResult',
   async ({ visitedNodes, pathNodes }, { signal, dispatch }) => {
+    dispatch(setGridStatus(GridStatus.ANIMATING));
     const setAllNodes = () => {
       dispatch(
         setMultipleNodesType({ nodes: visitedNodes, type: NodeType.VISITED })
       );
       dispatch(setMultipleNodesType({ nodes: pathNodes, type: NodeType.PATH }));
+      dispatch(setGridStatus(GridStatus.PAINTED));
     };
 
     await new Promise<void>((resolve) => {
@@ -44,8 +48,6 @@ export const animateResult = createAsyncThunk<
       };
       let v = 0;
       const animateVisited = () => {
-        console.log({ signal });
-
         const node = visitedNodes[v];
         dispatch(
           setNode({
@@ -66,6 +68,7 @@ export const animateResult = createAsyncThunk<
       };
       animateVisited();
     });
+    dispatch(setGridStatus(GridStatus.PAINTED));
   }
 );
 

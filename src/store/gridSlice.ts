@@ -1,24 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { GridNode, GridOfNodes, NodeType, RowCol } from 'types';
-import { createGrid, resizeGrid } from 'utils/grid';
-import { WindowDimensions } from 'hooks';
+import { createSlice } from '@reduxjs/toolkit';
 
 import extraReducers from 'store/gridExtraReducers';
+import { GridNode, GridOfNodes, NodeType, RowCol } from 'types';
+import { createGrid, resizeGrid } from 'utils/grid';
 
 export enum GridStatus {
   IDLE,
   ANIMATING,
+  PAINTED,
 }
 
 export interface GridSliceState {
   status: GridStatus;
-  gridSize: WindowDimensions;
+  gridSize: {
+    width: number;
+    height: number;
+  };
   grid: GridOfNodes;
   startCoord: RowCol;
   metaCoord: RowCol;
   addType: NodeType;
-  dirty: boolean;
 }
 
 const initialState: GridSliceState = {
@@ -28,14 +30,13 @@ const initialState: GridSliceState = {
   startCoord: { row: 0, col: 0 },
   metaCoord: { row: 0, col: 0 },
   addType: NodeType.EMPTY,
-  dirty: false,
 };
 
 export const gridSlice = createSlice({
   name: 'grid',
   initialState,
   reducers: {
-    setGridSize: (state, action: PayloadAction<WindowDimensions>) => {
+    setGridSize: (state, action: PayloadAction<GridSliceState['gridSize']>) => {
       if (
         state.gridSize.height === action.payload.height &&
         state.gridSize.width === action.payload.width
@@ -60,6 +61,9 @@ export const gridSlice = createSlice({
       state.startCoord = newGrid.start;
       state.metaCoord = newGrid.meta;
     },
+    setGridStatus: (state, action: PayloadAction<GridStatus>) => {
+      state.status = action.payload;
+    },
     updateGrid: (
       state,
       action: PayloadAction<{
@@ -70,11 +74,10 @@ export const gridSlice = createSlice({
 
       state.grid = action.payload.grid;
     },
-    setDirty: (state) => {
-      state.dirty = true;
-    },
+
     cleanGrid: (state) => {
-      if (!state.dirty) return;
+      if (state.status === GridStatus.ANIMATING) return;
+
       const typesToEmpty = [NodeType.PATH, NodeType.VISITED];
       state.grid.forEach((row) => {
         row.forEach((node) => {
@@ -83,8 +86,7 @@ export const gridSlice = createSlice({
           }
         });
       });
-
-      state.dirty = false;
+      state.status = GridStatus.IDLE;
     },
     setNode: (
       state,
@@ -98,6 +100,8 @@ export const gridSlice = createSlice({
       state.grid[row][col] = { ...state.grid[row][col], ...node };
     },
     setAddType: (state, action: PayloadAction<RowCol>) => {
+      if (state.status === GridStatus.ANIMATING) return;
+
       const { row, col } = action.payload;
       state.addType = state.grid[row][col].type;
     },
@@ -114,6 +118,8 @@ export const gridSlice = createSlice({
       state,
       action: PayloadAction<RowCol & { forceType?: NodeType }>
     ) => {
+      if (state.status === GridStatus.ANIMATING) return;
+
       const { row, col, forceType } = action.payload;
 
       const node = state.grid[row][col];
@@ -141,21 +147,6 @@ export const gridSlice = createSlice({
           state[addTypeString].col = col;
           break;
 
-        // case NodeType.META:
-        //   if (node.type !== NodeType.EMPTY) return;
-        //   node.type = NodeType.META;
-
-        //   state.grid[state.meta.row][state.meta.col].type = NodeType.EMPTY;
-        //   state.meta.row = row;
-        //   state.meta.col = col;
-        //   break;
-        // case NodeType.PATH:
-        //   node.type = NodeType.PATH;
-        //   break;
-        // case NodeType.WALL:
-        //   node.type = NodeType.EMPTY;
-        //   break;
-
         default:
           node.type = NodeType.WALL;
           break;
@@ -168,8 +159,8 @@ export const gridSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   setGridSize,
-  setDirty,
   cleanGrid,
+  setGridStatus,
   setNode,
   setMultipleNodesType,
   setAddType,

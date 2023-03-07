@@ -1,50 +1,24 @@
 import { useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Dispatch, PayloadAction } from '@reduxjs/toolkit';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { AppDispatch, RootState } from 'store/store';
-import { aStar, dijkstra, greedyBestFirstSearch } from 'algorithms/weighted';
+import { AlgorithmsSignature } from 'algorithms/types';
 import { breadthFirstSearch, depthFirstSearch } from 'algorithms/unweighted';
-import { animateResult, cleanGrid, setDirty, setNode } from 'store/gridSlice';
+import { aStar, dijkstra, greedyBestFirstSearch } from 'algorithms/weighted';
 import Button from 'components/atoms/Buttons/Button';
 import Checkbox from 'components/atoms/Checkbox';
-import { AlgorithmsSignature } from 'algorithms/types';
-import { GridNode, NodeType } from 'types';
-
-const colorNodes = async (
-  visitedNodes: GridNode[],
-  type: NodeType,
-  dispatch: Dispatch
-) =>
-  await new Promise<void>((resolve) => {
-    let i = 0;
-    const animate = () => {
-      const node = visitedNodes[i];
-      dispatch(
-        setNode({
-          row: node.row,
-          col: node.col,
-          node: { type },
-        })
-      );
-
-      i++;
-      if (i !== visitedNodes.length) {
-        // setTimeout(() => {
-        window.requestAnimationFrame(animate);
-        // }, 200);
-      } else {
-        resolve();
-      }
-    };
-    animate();
-  });
+import { animateResult, cleanGrid, GridStatus } from 'store/gridSlice';
+import { AppDispatch, RootState } from 'store/store';
 
 export default function AlgorithmsSelector() {
   const dispatch = useDispatch<AppDispatch>();
   const [diagonals, setDiagonals] = useState(false);
-  const [animationPromise, setAnimationPromise] =
-    useState<Promise<unknown | PayloadAction<any, any>>>(null);
+  const [animationPromise, setAnimationPromise] = useState<
+    Promise<unknown> & {
+      abort: (reason?: string) => void;
+    }
+  >(null);
+
+  const status = useSelector((state: RootState) => state.gridStore.status);
   const grid = useSelector((state: RootState) => state.gridStore.grid);
   const start = useSelector((state: RootState) => state.gridStore.startCoord);
   const meta = useSelector((state: RootState) => state.gridStore.metaCoord);
@@ -58,16 +32,10 @@ export default function AlgorithmsSelector() {
         allowDiagonals: diagonals,
         meta,
       });
-      console.log('Path length', pathNodes.length);
 
-      dispatch(setDirty());
       const promise = dispatch(animateResult({ visitedNodes, pathNodes }));
 
       setAnimationPromise(promise);
-
-      // colorNodes(visitedNodes, NodeType.VISITED, dispatch)
-      //   .then(async () => await colorNodes(pathNodes, NodeType.PATH, dispatch))
-      //   .catch(console.error);
     },
     [diagonals, dispatch, grid, meta, start]
   );
@@ -76,24 +44,38 @@ export default function AlgorithmsSelector() {
     animationPromise.abort();
   };
 
+  const isAnimating = status === GridStatus.ANIMATING;
+
   return (
     <>
-      <Button onClick={clickHandler(aStar)}>A*</Button>
-      <Button onClick={clickHandler(dijkstra)}>Dijkstra</Button>
-      <Button onClick={clickHandler(greedyBestFirstSearch)}>
+      <Button disabled={isAnimating} onClick={clickHandler(aStar)}>
+        A*
+      </Button>
+      <Button disabled={isAnimating} onClick={clickHandler(dijkstra)}>
+        Dijkstra
+      </Button>
+      <Button
+        disabled={isAnimating}
+        onClick={clickHandler(greedyBestFirstSearch)}
+      >
         Greedy best-first search
       </Button>
-      <Button onClick={clickHandler(breadthFirstSearch)}>
+      <Button disabled={isAnimating} onClick={clickHandler(breadthFirstSearch)}>
         Breadth first search
       </Button>
-      <Button onClick={clickHandler(depthFirstSearch)}>
+      <Button disabled={isAnimating} onClick={clickHandler(depthFirstSearch)}>
         Depth first search
       </Button>
       <div>
         Set diagonals
         <Checkbox checked={diagonals} onChange={setDiagonals} />
       </div>
-      <Button onClick={cancelAnimation}>CancelAnimation</Button>
+      <Button
+        disabled={status === GridStatus.IDLE || status === GridStatus.PAINTED}
+        onClick={cancelAnimation}
+      >
+        CancelAnimation
+      </Button>
     </>
   );
 }

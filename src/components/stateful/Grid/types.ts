@@ -5,5 +5,5 @@ export interface GridProps {
 export interface GridLatticeProps {
   rows: number;
   cols: number;
-  cellSize: number;
+  cellSize?: number;
 }

@@ -1,14 +1,18 @@
 import ButtonProps from './types';
 
+export enum buttonVariants {
+  primary = 'dark:focus:ring-primary/55 bg-primary hover:bg-primary/90 focus:ring-primary/50 disabled:hover:bg-primary',
+}
+
 export default function Button({
   children,
-  color = '#0ea5e9',
+  variant = 'primary',
   ...rest
 }: ButtonProps) {
   return (
     <button
       type="button"
-      className={`text-white bg-[#0ea5e9] hover:bg-[#0ea5e9]/90 focus:ring-4 focus:outline-none focus:ring-[#0ea5e9]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#0ea5e9]/55 mr-2 mb-2`}
+      className={`mr-2 mb-2 inline-flex items-center rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 disabled:opacity-70 ${buttonVariants[variant]}`}
       {...rest}
     >
       {children}

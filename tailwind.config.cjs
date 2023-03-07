@@ -6,6 +6,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: '#0ea5e9',
         grid: {
           border: colors.blue['500'],
           start: colors.red['500'],
@@ -44,6 +45,10 @@ module.exports = {
       animation: {
         'node-visited': 'node-visited 0.5s ease-out',
         'node-path': 'node-path 0.5s ease-out',
+      },
+      willChange: {
+        'border-color': 'border-color',
+        'node-animation': 'background-color, transform, border-radius',
       },
     },
   },

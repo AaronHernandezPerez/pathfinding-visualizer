@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+
 import CheckboxProps from './types';
 
 export default function Button({ onChange, ...rest }: CheckboxProps) {
