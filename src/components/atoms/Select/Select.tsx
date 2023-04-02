@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, memo, useState } from 'react';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
@@ -11,16 +11,16 @@ export const selectVariants = {
   primary: 'focus:border-primary focus:ring-primary',
 } as const;
 
-export default function Select<T>({
+function Select<T>({
   options,
   variant = 'primary',
   value = null,
-  onChange = () => {},
+  onChange,
   ...rest
 }: SelectProps<T>) {
   const [selected, setSelected] = useState(value);
   const handleChange = (value: SelectOptions<T>) => {
-    onChange(value);
+    onChange?.(value);
     setSelected(value);
   };
 
@@ -87,3 +87,5 @@ export default function Select<T>({
     </Listbox>
   );
 }
+
+export default memo(Select) as typeof Select;

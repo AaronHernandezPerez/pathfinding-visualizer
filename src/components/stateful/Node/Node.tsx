@@ -35,30 +35,35 @@ const typeStyles = {
   [NodeType.PATH]: '',
 } as const;
 
-function Node({ size, node }: NodeProps) {
+/**
+ * Instead of passing the node directly, we are getting the index of the node from the grid,
+ * and then getting the node from the grid. This is because the grid is a 2D array
+ * and we want to avoid re-rendering the entire grid when a single node changes.
+ */
+function Node({ size, row, col }: NodeProps) {
   const status = useSelector((state: RootState) => state.gridStore.status);
   const allowDiagonals = useSelector(
     (state: RootState) => state.gridStore.allowDiagonals
   );
+  const node = useSelector(
+    (state: RootState) => state.gridStore.grid[row][col]
+  );
   const { handleMouseDown, handleMouseEnter } = useGridMouseEvents(node);
 
-  const style = useMemo(
-    () => ({
-      height: size,
-      minWidth: size,
-      width: size,
-      marginTop: -1,
-      marginLeft: -1,
-      borderRadius:
-        allowDiagonals && node.type === NodeType.WALL ? '40%' : undefined,
-      overflow: 'hidden',
-    }),
-    [allowDiagonals, node.type, size]
-  );
-  const animationClass = useMemo(
-    () => (status === GridStatus.ANIMATING ? animationStyles[node.type] : ''),
-    [node.type, status]
-  );
+  const style = {
+    height: size,
+    minWidth: size,
+    width: size,
+    marginTop: -1,
+    marginLeft: -1,
+    borderRadius:
+      allowDiagonals && node.type === NodeType.WALL ? '40%' : undefined,
+    overflow: 'hidden',
+  };
+
+  const animationClass =
+    status === GridStatus.ANIMATING ? animationStyles[node.type] : '';
+
   return (
     <div
       onPointerDown={handleMouseDown}

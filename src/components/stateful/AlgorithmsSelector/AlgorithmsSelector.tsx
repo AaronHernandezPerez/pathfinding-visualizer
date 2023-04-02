@@ -21,7 +21,7 @@ const options: Array<SelectOptions<AlgorithmsSignature>> = [
   { label: 'Depth first search', value: depthFirstSearch },
 ];
 
-export default function AlgorithmsSelector() {
+function AlgorithmsSelector() {
   const dispatch = useDispatch<AppDispatch>();
 
   const [selectedOption, setSelectedOption] = useState<
@@ -41,7 +41,7 @@ export default function AlgorithmsSelector() {
   const start = useSelector((state: RootState) => state.gridStore.startCoord);
   const meta = useSelector((state: RootState) => state.gridStore.metaCoord);
 
-  const runAlgorithm = useCallback(() => {
+  const runAlgorithm = () => {
     dispatch(cleanGrid());
     const { visitedNodes, pathNodes } = selectedOption.value({
       start,
@@ -53,7 +53,11 @@ export default function AlgorithmsSelector() {
     const promise = dispatch(animateResult({ visitedNodes, pathNodes }));
 
     setAnimationPromise(promise);
-  }, [allowDiagonals, dispatch, grid, meta, selectedOption, start]);
+  };
+
+  const onChange = useCallback((t: SelectOptions<AlgorithmsSignature>) => {
+    setSelectedOption(t);
+  }, []);
 
   const cancelAnimation = () => {
     animationPromise.abort();
@@ -68,9 +72,7 @@ export default function AlgorithmsSelector() {
           options={options}
           value={selectedOption}
           disabled={isAnimating}
-          onChange={(t) => {
-            setSelectedOption(t);
-          }}
+          onChange={onChange}
         />
       </div>
 
@@ -87,3 +89,5 @@ export default function AlgorithmsSelector() {
     </>
   );
 }
+
+export default AlgorithmsSelector;

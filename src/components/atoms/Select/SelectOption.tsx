@@ -7,7 +7,7 @@ export const selectOptionVariants = {
   primary: { option: 'bg-primary', checkIcon: 'text-primary' },
 } as const;
 
-export default function SelectOption({
+function SelectOption({
   option,
   variant,
   disabled = false,
@@ -61,3 +61,5 @@ export default function SelectOption({
     </Listbox.Option>
   );
 }
+
+export default SelectOption;

@@ -1,9 +1,5 @@
-export interface GridProps {
-  cellSize?: number;
-}
+import { GridOfNodes } from 'types';
 
-export interface GridLatticeProps {
-  rows: number;
-  cols: number;
+export interface GridProps {
   cellSize?: number;
 }

@@ -5,7 +5,7 @@ import Checkbox from 'components/atoms/Checkbox/Checkbox';
 import { toggleAllowDiagonals } from 'store/gridSlice';
 import { AppDispatch, RootState } from 'store/store';
 
-export default function AllowDiagonals() {
+function AllowDiagonals() {
   const dispatch = useDispatch<AppDispatch>();
   const allowDiagonals = useSelector(
     (state: RootState) => state.gridStore.allowDiagonals
@@ -22,3 +22,5 @@ export default function AllowDiagonals() {
     />
   );
 }
+
+export default AllowDiagonals;

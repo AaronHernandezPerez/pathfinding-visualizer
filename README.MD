@@ -32,6 +32,7 @@ npm run dev
 ## TODO
 
 - Replace the grid rendering with a canvas, since updating individual dom nodes takes a lot of time and introduces lag
+- Add clean grid button
 - Add weighted nodes
 - Add automatic mazes
 - Show how much the algorithm took to get to the meta

@@ -8,11 +8,7 @@ export const buttonVariants = {
     'dark:focus:ring-secondary/55 bg-secondary hover:bg-secondary/90 focus:ring-secondary/50 disabled:hover:bg-secondary',
 };
 
-export default function Button({
-  children,
-  variant = 'primary',
-  ...rest
-}: ButtonProps) {
+function Button({ children, variant = 'primary', ...rest }: ButtonProps) {
   return (
     <button
       type="button"
@@ -26,3 +22,5 @@ export default function Button({
     </button>
   );
 }
+
+export default Button;
