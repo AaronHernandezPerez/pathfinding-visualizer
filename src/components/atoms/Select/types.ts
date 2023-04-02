@@ -2,18 +2,19 @@ import { selectVariants } from './Select';
 import { selectOptionVariants } from './SelectOption';
 import { selectSeparatorVariants } from './SelectSeparator';
 
-export interface SelectOptions {
+export interface SelectOptions<T = unknown> {
   label: string;
   type?: 'separator';
-  value?: unknown;
+  value?: T;
+  disabled?: boolean;
 }
 
-export default interface SelectProps {
-  options: SelectOptions[];
+export default interface SelectProps<T> {
+  options: Array<SelectOptions<T>>;
   disabled?: boolean;
-  value?: SelectOptions | null;
+  value?: SelectOptions<T> | null;
   variant?: keyof typeof selectVariants;
-  onChange?: (arg: SelectOptions) => void;
+  onChange?: (arg: SelectOptions<T>) => void;
 }
 
 export interface SelectSeparatorProps {
@@ -23,5 +24,6 @@ export interface SelectSeparatorProps {
 
 export interface SelectOptionProps {
   option: SelectOptions;
+  disabled: boolean;
   variant: keyof typeof selectOptionVariants;
 }

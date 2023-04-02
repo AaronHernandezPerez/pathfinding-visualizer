@@ -33,7 +33,9 @@ export default function depthFirstSearch({
 
   while (!unvisited.isEmpty) {
     const node = unvisited.pop();
-    searchedNodes.push(node);
+    if (node.type !== NodeType.START) {
+      searchedNodes.push(node);
+    }
 
     // Always select the first node
     const connectingNode = getConnectingNodes(node, grid, allowDiagonals).find(
@@ -50,8 +52,6 @@ export default function depthFirstSearch({
     }
 
     if (connectingNode.type === NodeType.META) {
-      searchedNodes.shift();
-
       return {
         visitedNodes: searchedNodes,
         pathNodes: getPath(node, visitedPath),
@@ -61,6 +61,6 @@ export default function depthFirstSearch({
       unvisited.push(connectingNode);
     }
   }
-  searchedNodes.shift();
+
   return { visitedNodes: searchedNodes, pathNodes: [] };
 }

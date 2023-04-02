@@ -22,6 +22,7 @@
     "jsx": "react-jsx",
     "strictNullChecks": false,
     "types": [
+      "vite/client",
       "vitest/globals"
     ],
     "noErrorTruncation": true

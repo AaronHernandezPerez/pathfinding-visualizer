@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
+import { useGridMouseEvents } from 'hooks';
 import { GridStatus } from 'store/gridSlice';
 import { RootState } from 'store/store';
 import { NodeType } from 'types';
@@ -29,47 +30,45 @@ const typeStyles = {
   [NodeType.START]: '',
   [NodeType.META]: '',
   [NodeType.EMPTY]: '',
-  [NodeType.WALL]: 'border-grid-wall',
+  [NodeType.WALL]: 'border-grid-wall border-none',
   [NodeType.VISITED]: '',
   [NodeType.PATH]: '',
 } as const;
 
-function Node({
-  size,
-  row,
-  col,
-  handleMouseDown,
-  handleMouseEnter,
-}: NodeProps) {
+function Node({ size, node }: NodeProps) {
   const status = useSelector((state: RootState) => state.gridStore.status);
-  const { id, type } = useSelector(
-    (state: RootState) => state.gridStore.grid[row][col]
+  const allowDiagonals = useSelector(
+    (state: RootState) => state.gridStore.allowDiagonals
   );
+  const { handleMouseDown, handleMouseEnter } = useGridMouseEvents(node);
 
-  const style = useMemo(
-    () => ({ height: size, minWidth: size, width: size }),
-    [size]
-  );
-  const animationClass = useMemo(
-    () => (status === GridStatus.ANIMATING ? animationStyles[type] : ''),
-    [status, type]
-  );
+  const style = {
+    height: size,
+    minWidth: size,
+    width: size,
+    marginTop: -1,
+    marginLeft: -1,
+    borderRadius:
+      allowDiagonals && node.type === NodeType.WALL ? '40%' : undefined,
+    overflow: 'hidden',
+  };
+  const animationClass =
+    status === GridStatus.ANIMATING ? animationStyles[node.type] : '';
 
   return (
     <div
       onPointerDown={handleMouseDown}
       onPointerEnter={handleMouseEnter}
-      id={id}
       className={joinClasses(
-        'will-change-border-color border-grid-border border-r border-b',
-        typeStyles[type]
+        'will-change-border border-grid-border border',
+        typeStyles[node.type]
       )}
       style={style}
     >
       <div
         className={joinClasses(
           'will-change-node-animation pointer-events-none h-full',
-          internalTypeStyles[type],
+          internalTypeStyles[node.type],
           animationClass
         )}
       ></div>

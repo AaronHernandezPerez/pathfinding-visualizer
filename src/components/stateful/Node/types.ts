@@ -1,9 +1,6 @@
-import { MouseEvent } from 'react';
+import { GridNode } from 'types';
 
 export interface NodeProps {
   size: number;
-  row: number;
-  col: number;
-  handleMouseDown: (e: MouseEvent) => void;
-  handleMouseEnter: (e: MouseEvent) => void;
+  node: GridNode;
 }

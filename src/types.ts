@@ -1,10 +1,10 @@
 export enum NodeType {
-  START,
-  EMPTY,
-  WALL,
-  VISITED,
-  PATH,
-  META,
+  START = 'start',
+  EMPTY = 'empty',
+  WALL = 'wall',
+  VISITED = 'visited',
+  PATH = 'path',
+  META = 'meta',
 }
 
 export type GridOfNodes = GridNode[][];

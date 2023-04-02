@@ -2,16 +2,14 @@ import { MouseEvent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { cleanGrid, setAddType, setNodeType } from 'store/gridSlice';
-import { NodeType } from 'types';
-import { extractColRow } from 'utils/grid';
+import { GridNode, NodeType } from 'types';
 
-export default function useGridMouseEvents() {
+export default function useGridMouseEvents(node: GridNode) {
   const dispatch = useDispatch();
 
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const { row, col } = extractColRow(target.id);
+      const { row, col } = node;
 
       dispatch(cleanGrid());
 
@@ -30,14 +28,13 @@ export default function useGridMouseEvents() {
         })
       );
     },
-    [dispatch]
+    [dispatch, node]
   );
 
   const handleMouseEnter = useCallback(
     (e: MouseEvent) => {
       if (e.buttons === 0) return;
-      const target = e.target as HTMLElement;
-      const { row, col } = extractColRow(target.id);
+      const { row, col } = node;
 
       dispatch(
         setNodeType({
@@ -47,7 +44,7 @@ export default function useGridMouseEvents() {
         })
       );
     },
-    [dispatch]
+    [dispatch, node]
   );
 
   return { handleMouseDown, handleMouseEnter };

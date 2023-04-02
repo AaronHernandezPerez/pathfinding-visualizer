@@ -5,8 +5,12 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      spacing: {
+        inherit: 'inherit',
+      },
       colors: {
         primary: '#0ea5e9',
+        secondary: '#19376D',
         grid: {
           border: colors.blue['500'],
           start: colors.red['500'],
@@ -47,7 +51,7 @@ module.exports = {
         'node-path': 'node-path 0.5s ease-out',
       },
       willChange: {
-        'border-color': 'border-color',
+        border: 'border, border-radius',
         'node-animation': 'background-color, transform, border-radius',
       },
     },

@@ -6,9 +6,9 @@ import { GridNode, GridOfNodes, NodeType, RowCol } from 'types';
 import { createGrid, resizeGrid } from 'utils/grid';
 
 export enum GridStatus {
-  IDLE,
-  ANIMATING,
-  PAINTED,
+  IDLE = 'idle',
+  ANIMATING = 'animating',
+  PAINTED = 'painted',
 }
 
 export interface GridSliceState {
@@ -21,6 +21,7 @@ export interface GridSliceState {
   startCoord: RowCol;
   metaCoord: RowCol;
   addType: NodeType;
+  allowDiagonals: boolean;
 }
 
 const initialState: GridSliceState = {
@@ -30,6 +31,7 @@ const initialState: GridSliceState = {
   startCoord: { row: 0, col: 0 },
   metaCoord: { row: 0, col: 0 },
   addType: NodeType.EMPTY,
+  allowDiagonals: false,
 };
 
 export const gridSlice = createSlice({
@@ -70,8 +72,6 @@ export const gridSlice = createSlice({
         grid: GridOfNodes;
       }>
     ) => {
-      console.log('NewGrid', action.payload.grid);
-
       state.grid = action.payload.grid;
     },
 
@@ -114,6 +114,7 @@ export const gridSlice = createSlice({
         state.grid[row][col].type = type;
       });
     },
+
     setNodeType: (
       state,
       action: PayloadAction<RowCol & { forceType?: NodeType }>
@@ -152,6 +153,12 @@ export const gridSlice = createSlice({
           break;
       }
     },
+    setAllowDiagonals: (state, action: PayloadAction<boolean>) => {
+      state.allowDiagonals = action.payload;
+    },
+    toggleAllowDiagonals: (state) => {
+      state.allowDiagonals = !state.allowDiagonals;
+    },
   },
   extraReducers,
 });
@@ -166,6 +173,8 @@ export const {
   setAddType,
   setNodeType,
   updateGrid,
+  setAllowDiagonals,
+  toggleAllowDiagonals,
 } = gridSlice.actions;
 
 // Extra actions from the extra reducer

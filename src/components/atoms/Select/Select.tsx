@@ -11,17 +11,15 @@ export const selectVariants = {
   primary: 'focus:border-primary focus:ring-primary',
 } as const;
 
-// todo: add type separator, clean up classes and code!!!!
-export default function Select({
+export default function Select<T>({
   options,
   variant = 'primary',
   value = null,
   onChange = () => {},
   ...rest
-}: SelectProps) {
+}: SelectProps<T>) {
   const [selected, setSelected] = useState(value);
-  const handleChange = (value: SelectOptions) => {
-    console.log('handleChange', { value });
+  const handleChange = (value: SelectOptions<T>) => {
     onChange(value);
     setSelected(value);
   };
@@ -32,7 +30,7 @@ export default function Select({
         <>
           <Listbox.Button
             className={joinClasses(
-              'w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-1',
+              'w-full h-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-1',
               selectVariants[variant]
             )}
           >
@@ -40,7 +38,7 @@ export default function Select({
               <span
                 className={joinClasses(
                   'ml-3 truncate',
-                  disabled ? 'text-gray-400' : ''
+                  disabled ? 'text-gray-400' : 'text-black'
                 )}
               >
                 {selected.label}
@@ -61,7 +59,7 @@ export default function Select({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="ring-opacity/5 absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black focus:outline-none sm:text-sm">
+            <Listbox.Options className="ring-opacity/5 w-inherit absolute z-10 mt-1 max-h-56 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black focus:outline-none sm:text-sm">
               {options.map((option) => {
                 if (option.type === 'separator') {
                   return (
@@ -77,6 +75,7 @@ export default function Select({
                       variant={variant}
                       key={option.label}
                       option={option}
+                      disabled={option.disabled}
                     />
                   );
                 }

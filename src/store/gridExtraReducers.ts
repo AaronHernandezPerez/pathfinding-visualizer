@@ -10,24 +10,39 @@ import {
 } from 'store/gridSlice';
 import { GridNode, NodeType } from 'types';
 
+const ANIMATION_TIME = 500;
+
 export const animateResult = createAsyncThunk<
   void,
   { visitedNodes: GridNode[]; pathNodes: GridNode[] }
 >(
   'grid/animateResult',
   async ({ visitedNodes, pathNodes }, { signal, dispatch }) => {
-    dispatch(setGridStatus(GridStatus.ANIMATING));
-    const setAllNodes = () => {
-      dispatch(
-        setMultipleNodesType({ nodes: visitedNodes, type: NodeType.VISITED })
-      );
-      dispatch(setMultipleNodesType({ nodes: pathNodes, type: NodeType.PATH }));
-      dispatch(setGridStatus(GridStatus.PAINTED));
-    };
-
     await new Promise<void>((resolve) => {
+      if (visitedNodes.length === 0) {
+        resolve();
+      }
+
+      const timeoutResolve = () =>
+        setTimeout(() => {
+          resolve();
+        }, ANIMATION_TIME);
+
+      const setAllNodes = () => {
+        dispatch(
+          setMultipleNodesType({ nodes: visitedNodes, type: NodeType.VISITED })
+        );
+        dispatch(
+          setMultipleNodesType({ nodes: pathNodes, type: NodeType.PATH })
+        );
+        timeoutResolve();
+      };
+
       let p = 0;
       const animatePath = () => {
+        if (pathNodes.length === 0) {
+          return timeoutResolve();
+        }
         const node = pathNodes[p];
         dispatch(
           setNode({
@@ -38,14 +53,14 @@ export const animateResult = createAsyncThunk<
         );
         p++;
         if (signal.aborted) {
-          return setAllNodes();
-        }
-        if (p !== pathNodes.length) {
+          setAllNodes();
+        } else if (p !== pathNodes.length) {
           window.requestAnimationFrame(animatePath);
         } else {
-          resolve();
+          timeoutResolve();
         }
       };
+
       let v = 0;
       const animateVisited = () => {
         const node = visitedNodes[v];
@@ -58,17 +73,16 @@ export const animateResult = createAsyncThunk<
         );
         v++;
         if (signal.aborted) {
-          return setAllNodes();
-        }
-        if (v !== visitedNodes.length) {
+          setAllNodes();
+        } else if (v !== visitedNodes.length) {
           window.requestAnimationFrame(animateVisited);
         } else {
           animatePath();
         }
       };
+
       animateVisited();
     });
-    dispatch(setGridStatus(GridStatus.PAINTED));
   }
 );
 
@@ -80,10 +94,10 @@ const extraReducers = (builder: ActionReducerMapBuilder<GridSliceState>) => {
       }
     })
     .addCase(animateResult.fulfilled, (state) => {
-      state.status = GridStatus.IDLE;
+      state.status = GridStatus.PAINTED;
     })
     .addCase(animateResult.rejected, (state) => {
-      state.status = GridStatus.IDLE;
+      state.status = GridStatus.PAINTED;
     });
 };
 

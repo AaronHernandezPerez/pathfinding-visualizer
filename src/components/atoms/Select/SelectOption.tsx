@@ -7,26 +7,39 @@ export const selectOptionVariants = {
   primary: { option: 'bg-primary', checkIcon: 'text-primary' },
 } as const;
 
-export default function SelectOption({ option, variant }: SelectOptionProps) {
+export default function SelectOption({
+  option,
+  variant,
+  disabled = false,
+}: SelectOptionProps) {
   return (
     <Listbox.Option
+      disabled={disabled}
       className={({ active }) =>
         joinClasses(
           active
             ? `text-white ${selectOptionVariants[variant].option}`
             : 'text-gray-900',
-          'relative cursor-default select-none py-2 pl-3 pr-9'
+          'relative cursor-default select-none py-2 px-4'
         )
       }
       value={option}
     >
       {({ selected, active }) => (
-        <>
-          <div className="flex items-center">
+        <div
+          className={joinClasses(
+            'flex',
+            disabled ? 'justify-center' : 'justify-between'
+          )}
+        >
+          <div
+            className="flex items-center"
+            style={{ maxWidth: 'calc(100% - 20px)' }}
+          >
             <span
               className={joinClasses(
                 selected ? 'font-semibold' : 'font-normal',
-                'ml-3 block truncate'
+                ' block truncate'
               )}
             >
               {option.label}
@@ -37,13 +50,13 @@ export default function SelectOption({ option, variant }: SelectOptionProps) {
             <span
               className={joinClasses(
                 active ? 'text-white' : selectOptionVariants[variant].checkIcon,
-                'absolute inset-y-0 right-0 flex items-center pr-4'
+                'inset-y-0 right-0 flex items-center'
               )}
             >
               <CheckIcon className="h-5 w-5" aria-hidden="true" />
             </span>
           ) : null}
-        </>
+        </div>
       )}
     </Listbox.Option>
   );
