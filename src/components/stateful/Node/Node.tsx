@@ -42,19 +42,23 @@ function Node({ size, node }: NodeProps) {
   );
   const { handleMouseDown, handleMouseEnter } = useGridMouseEvents(node);
 
-  const style = {
-    height: size,
-    minWidth: size,
-    width: size,
-    marginTop: -1,
-    marginLeft: -1,
-    borderRadius:
-      allowDiagonals && node.type === NodeType.WALL ? '40%' : undefined,
-    overflow: 'hidden',
-  };
-  const animationClass =
-    status === GridStatus.ANIMATING ? animationStyles[node.type] : '';
-
+  const style = useMemo(
+    () => ({
+      height: size,
+      minWidth: size,
+      width: size,
+      marginTop: -1,
+      marginLeft: -1,
+      borderRadius:
+        allowDiagonals && node.type === NodeType.WALL ? '40%' : undefined,
+      overflow: 'hidden',
+    }),
+    [allowDiagonals, node.type, size]
+  );
+  const animationClass = useMemo(
+    () => (status === GridStatus.ANIMATING ? animationStyles[node.type] : ''),
+    [node.type, status]
+  );
   return (
     <div
       onPointerDown={handleMouseDown}

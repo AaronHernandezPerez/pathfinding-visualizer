@@ -4,7 +4,6 @@ import { ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   GridSliceState,
   GridStatus,
-  setGridStatus,
   setMultipleNodesType,
   setNode,
 } from 'store/gridSlice';
