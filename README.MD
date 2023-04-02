@@ -4,7 +4,6 @@
   <img src="docs/screen2.png" alt="Mobile view" />
   
 </p>
-<br/>
 <h1 align="center"><a href="https://aaronhernandezperez.github.io/pathfinding-visualizer/" target="_blank">Live demo</a></h1>
 
 Pathfinder visualizer made with React, Redux and Tailwind.

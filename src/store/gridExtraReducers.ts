@@ -1,22 +1,34 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit';
 
+import { AlgorithmsSignature } from 'algorithms/types';
 import {
+  cleanGrid,
   GridSliceState,
   GridStatus,
   setMultipleNodesType,
   setNode,
 } from 'store/gridSlice';
+import { RootState } from 'store/store';
 import { GridNode, NodeType } from 'types';
 
 const ANIMATION_TIME = 500;
 
 export const animateResult = createAsyncThunk<
   void,
-  { visitedNodes: GridNode[]; pathNodes: GridNode[] }
+  { algorithm: AlgorithmsSignature }
 >(
   'grid/animateResult',
-  async ({ visitedNodes, pathNodes }, { signal, dispatch }) => {
+  async ({ algorithm }, { signal, getState, dispatch }) => {
+    const { grid, startCoord, allowDiagonals, metaCoord } = (
+      getState() as RootState
+    ).gridStore;
+    const { visitedNodes, pathNodes } = algorithm({
+      start: startCoord,
+      meta: metaCoord,
+      grid,
+      allowDiagonals,
+    });
     await new Promise<void>((resolve) => {
       if (visitedNodes.length === 0) {
         resolve();

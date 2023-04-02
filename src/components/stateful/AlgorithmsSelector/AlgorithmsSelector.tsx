@@ -23,7 +23,7 @@ const options: Array<SelectOptions<AlgorithmsSignature>> = [
 
 function AlgorithmsSelector() {
   const dispatch = useDispatch<AppDispatch>();
-
+  const status = useSelector((state: RootState) => state.gridStore.status);
   const [selectedOption, setSelectedOption] = useState<
     SelectOptions<AlgorithmsSignature>
   >(options[1]);
@@ -33,25 +33,11 @@ function AlgorithmsSelector() {
     }
   >(null);
 
-  const allowDiagonals = useSelector(
-    (state: RootState) => state.gridStore.allowDiagonals
-  );
-  const status = useSelector((state: RootState) => state.gridStore.status);
-  const grid = useSelector((state: RootState) => state.gridStore.grid);
-  const start = useSelector((state: RootState) => state.gridStore.startCoord);
-  const meta = useSelector((state: RootState) => state.gridStore.metaCoord);
-
   const runAlgorithm = () => {
     dispatch(cleanGrid());
-    const { visitedNodes, pathNodes } = selectedOption.value({
-      start,
-      grid: structuredClone(grid),
-      allowDiagonals,
-      meta,
-    });
-
-    const promise = dispatch(animateResult({ visitedNodes, pathNodes }));
-
+    const promise = dispatch(
+      animateResult({ algorithm: selectedOption.value })
+    );
     setAnimationPromise(promise);
   };
 
