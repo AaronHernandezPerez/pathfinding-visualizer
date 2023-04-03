@@ -3,16 +3,13 @@ import { ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { AlgorithmsSignature } from 'algorithms/types';
 import {
-  cleanGrid,
   GridSliceState,
   GridStatus,
   setMultipleNodesType,
   setNode,
 } from 'store/gridSlice';
 import { RootState } from 'store/store';
-import { GridNode, NodeType } from 'types';
-
-const ANIMATION_TIME = 500;
+import { NodeType } from 'types';
 
 export const animateResult = createAsyncThunk<
   void,
@@ -34,11 +31,6 @@ export const animateResult = createAsyncThunk<
         resolve();
       }
 
-      const timeoutResolve = () =>
-        setTimeout(() => {
-          resolve();
-        }, ANIMATION_TIME);
-
       const setAllNodes = () => {
         dispatch(
           setMultipleNodesType({ nodes: visitedNodes, type: NodeType.VISITED })
@@ -46,13 +38,13 @@ export const animateResult = createAsyncThunk<
         dispatch(
           setMultipleNodesType({ nodes: pathNodes, type: NodeType.PATH })
         );
-        timeoutResolve();
+        resolve();
       };
 
       let p = 0;
       const animatePath = () => {
         if (pathNodes.length === 0) {
-          return timeoutResolve();
+          return resolve();
         }
         const node = pathNodes[p];
         dispatch(
@@ -68,7 +60,7 @@ export const animateResult = createAsyncThunk<
         } else if (p !== pathNodes.length) {
           window.requestAnimationFrame(animatePath);
         } else {
-          timeoutResolve();
+          resolve();
         }
       };
 
